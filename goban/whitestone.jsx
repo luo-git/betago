@@ -14,7 +14,7 @@ class WhiteStone extends Component {
           r={cellSize / 2.5 - 1}
           fill="white"
           stroke="black"
-          strokeWidth="2"
+          strokeWidth={Math.floor(1 + cellSize / 20)}
         />
       </Svg>
     );

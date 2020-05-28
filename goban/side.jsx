@@ -47,7 +47,7 @@ class GobanSide extends Component {
           x2={cellSize}
           y2={cellSize / 2}
           stroke="black"
-          strokeWidth="2"
+          strokeWidth={Math.floor(1 + cellSize / 20)}
         />
         <Line
           x1={cellSize / 2}
@@ -55,7 +55,7 @@ class GobanSide extends Component {
           x2={cellSize / 2}
           y2={cellSize}
           stroke="black"
-          strokeWidth="2"
+          strokeWidth={Math.floor(1 + cellSize / 20)}
         />
         {this.getStone(this.props)}
       </Svg>

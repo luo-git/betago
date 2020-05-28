@@ -17,7 +17,7 @@ export default class App extends React.Component {
         onLayout={(event) => this.measureView(event)}
         style={styles.container}
       >
-        <Goban boardWidth={this.state.boardWidth} boardSize={[9, 9]} />
+        <Goban boardWidth={this.state.boardWidth} boardSize={[13, 19]} />
       </View>
     );
   }
