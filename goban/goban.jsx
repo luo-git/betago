@@ -15,17 +15,17 @@ class Goban extends Component {
   }
 
   handlePress = (cellId) => {
-    let newState = _.cloneDeep(this.state);
+    let newState = cloneDeep(this.state);
     if (this.state.turn === 0) {
       newState.turn = 1;
-      const newCell = _.cloneDeep(newState.board[cellId[0]][cellId[1]]);
+      const newCell = cloneDeep(newState.board[cellId[0]][cellId[1]]);
       newCell.stoneState = 1;
       newState.board[cellId[0]][cellId[1]] = newCell;
       this.setState(newState);
     }
     if (this.state.turn === 1) {
       newState.turn = 0;
-      const newCell = _.cloneDeep(newState.board[cellId[0]][cellId[1]]);
+      const newCell = cloneDeep(newState.board[cellId[0]][cellId[1]]);
       newCell.stoneState = 2;
       newState.board[cellId[0]][cellId[1]] = newCell;
       this.setState(newState);
@@ -51,8 +51,49 @@ class Goban extends Component {
    * Generate a unique key for a given tuple
    */
   getUniqueKey = (x, y) => {
-    let num = Number("1" + x + y);
+    let num = 10000 + x * 100 + y;
     return num;
+  };
+
+  checkStar = (row, col) => {
+    const boardRow = this.props.boardSize[0];
+    const boardCol = this.props.boardSize[1];
+
+    if (boardRow >= 11 && boardCol >= 11) {
+      if (
+        (row === 3 || row === boardRow - 4) &&
+        (col === 3 || col === boardCol - 4)
+      ) {
+        return true;
+      }
+    } else if (boardRow >= 9 && boardCol >= 9) {
+      if (
+        (row === 2 || row === this.props.boardSize[0] - 3) &&
+        (col === 2 || col === this.props.boardSize[1] - 3)
+      ) {
+        return true;
+      }
+    }
+    if (boardRow % 2 === 1 && boardCol % 2 === 1) {
+      if (
+        row === Math.floor(boardRow / 2) &&
+        col === Math.floor(boardCol / 2)
+      ) {
+        return true;
+      }
+      if (boardRow >= 13 && boardCol >= 13) {
+        if (
+          (row === 3 && col === Math.floor(boardCol / 2)) ||
+          (row === Math.floor(boardRow / 2) &&
+            (col === 3 || col === boardCol - 4)) ||
+          (row === boardRow - 4 && col === Math.floor(boardCol / 2))
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   };
 
   /**
@@ -61,7 +102,7 @@ class Goban extends Component {
   renderByID = ({ cellId, stoneState }) => {
     const row = cellId[0];
     const col = cellId[1];
-    const size = this.props.boardWidth / this.props.boardSize[1];
+    const size = Math.floor(this.props.boardWidth / this.props.boardSize[1]);
     if (row === 0) {
       if (col === 0) {
         // Top left corner
@@ -167,7 +208,7 @@ class Goban extends Component {
         <GobanCross
           cellId={cellId}
           cellSize={size}
-          isStar={false}
+          isStar={this.checkStar(row, col)}
           stoneState={stoneState}
           handlePress={this.handlePress}
           key={this.getUniqueKey(row, col)}
@@ -191,7 +232,9 @@ class Goban extends Component {
   };
 
   render() {
-    return <View>{this.renderCells()}</View>;
+    return (
+      <View style={{ backgroundColor: "#dcb35c" }}>{this.renderCells()}</View>
+    );
   }
 }
 
