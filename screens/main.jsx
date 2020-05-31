@@ -1,47 +1,19 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import ProfileScreen from "./profile";
 import SettingsScreen from "./settings";
-import GameScreen from "./game";
-import HomeScreen from "./home";
-import ClanScreen from "./clan";
+import MainTabScreen from "./maintab";
 
-const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
 export default function MainScreen() {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          switch (route.name) {
-            case "Home":
-              iconName = focused
-                ? "ios-information-circle"
-                : "ios-information-circle-outline";
-              break;
-            case "Game":
-              iconName = focused ? "ios-list-box" : "ios-list";
-              break;
-            case "Clan":
-              iconName = "ios-people";
-              break;
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
-      tabBarOptions={{
-        activeTintColor: "tomato",
-        inactiveTintColor: "gray",
-      }}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Game" component={GameScreen} />
-      <Tab.Screen name="Clan" component={ClanScreen} />
-    </Tab.Navigator>
+    <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Screen name="Home" component={MainTabScreen} />
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Settings" component={SettingsScreen} />
+    </Drawer.Navigator>
   );
 }
 
