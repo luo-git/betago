@@ -25,7 +25,7 @@ class GobanCross extends Component {
         <Circle
           cx={cellSize / 2}
           cy={cellSize / 2}
-          r={cellSize / 10}
+          r={cellSize / 5}
           fill="black"
         />
       );

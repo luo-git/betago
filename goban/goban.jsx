@@ -5,6 +5,10 @@ import GobanCorner from "./corner";
 import GobanSide from "./side";
 import GobanCross from "./cross";
 
+/**
+ * Goban Component
+ * Props: boardSize
+ */
 class Goban extends Component {
   constructor(props) {
     super(props);
