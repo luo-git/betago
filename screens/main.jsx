@@ -5,16 +5,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SettingsScreen from "./settings";
 import GameScreen from "./game";
+import HomeScreen from "./home";
+import ClanScreen from "./clan";
 
 const Tab = createBottomTabNavigator();
-
-function HomeScreen({ navigation }) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home screen</Text>
-    </View>
-  );
-}
 
 export default function MainScreen() {
   return (
@@ -23,14 +17,19 @@ export default function MainScreen() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "Home") {
-            iconName = focused
-              ? "ios-information-circle"
-              : "ios-information-circle-outline";
-          } else if (route.name === "Game") {
-            iconName = focused ? "ios-list-box" : "ios-list";
+          switch (route.name) {
+            case "Home":
+              iconName = focused
+                ? "ios-information-circle"
+                : "ios-information-circle-outline";
+              break;
+            case "Game":
+              iconName = focused ? "ios-list-box" : "ios-list";
+              break;
+            case "Clan":
+              iconName = "ios-people";
+              break;
           }
-
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
@@ -41,6 +40,7 @@ export default function MainScreen() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Game" component={GameScreen} />
+      <Tab.Screen name="Clan" component={ClanScreen} />
     </Tab.Navigator>
   );
 }
