@@ -12,7 +12,7 @@ export default function GameScreen() {
         onLayout={(event) => setBoardWidth(event.nativeEvent.layout.width)}
         style={styles.container}
       >
-        <Goban boardWidth={boardWidth} boardSize={[19, 19]} />
+        <Goban boardWidth={boardWidth} boardSize={[13, 9]} />
       </View>
     </View>
   );
