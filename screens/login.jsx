@@ -36,6 +36,8 @@ class LoginScreen extends Component {
   constructor() {
     super();
 
+    this.state = { email: "", password: "" };
+
     // Initial button opacity of 1
     this.buttonOpacity = new Value(1);
 
@@ -69,6 +71,41 @@ class LoginScreen extends Component {
     this.onLoginGoogle = ({ nativeEvent }) => {
       if (nativeEvent.state == State.END) {
         this.signInWithGoogleAsync();
+      }
+    };
+
+    this.onSignUpEmail = ({ nativeEvent }) => {
+      if (nativeEvent.state == State.END) {
+        if (this.state.password.length < 8) {
+          alert("Password must be at least 8 characters!");
+          return;
+        }
+
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(this.state.email, this.state.password)
+          .catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // ...
+            console.log(error, errorCode);
+          });
+      }
+    };
+
+    this.onSignInEmail = ({ nativeEvent }) => {
+      if (nativeEvent.state == State.END) {
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(this.state.email, this.state.password)
+          .catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // ...
+            alert(errorCode, error);
+          });
       }
     };
 
@@ -228,7 +265,7 @@ class LoginScreen extends Component {
             fontWeight: "bold",
             fontFamily: "serif",
             position: "absolute",
-            top: screenHeight / 4,
+            top: screenHeight / 6,
             alignSelf: "center",
           }}
         >
@@ -297,15 +334,41 @@ class LoginScreen extends Component {
               placeholder="EMAIL"
               style={styles.textInput}
               placeholderTextColor="grey"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={(email) => this.setState({ email })}
             />
             <TextInput
               placeholder="PASSWORD"
               style={styles.textInput}
               placeholderTextColor="grey"
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry={true}
+              onChangeText={(password) => this.setState({ password })}
             />
-            <Animated.View style={styles.button}>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>SIGN IN</Text>
-            </Animated.View>
+            <View
+              style={{
+                marginTop: 20,
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <TapGestureHandler onHandlerStateChange={this.onSignInEmail}>
+                <Animated.View style={styles.buttonSmall}>
+                  <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                    SIGN IN
+                  </Text>
+                </Animated.View>
+              </TapGestureHandler>
+              <TapGestureHandler onHandlerStateChange={this.onSignUpEmail}>
+                <Animated.View style={styles.buttonSmall}>
+                  <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                    SIGN UP
+                  </Text>
+                </Animated.View>
+              </TapGestureHandler>
+            </View>
           </Animated.View>
         </View>
       </View>
@@ -365,6 +428,20 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "white",
     height: 70,
+    marginHorizontal: 20,
+    borderRadius: 35,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 5,
+    shadowOffset: { width: 2, height: 2 },
+    shadowColor: "black",
+    shadowOpacity: 0.2,
+    elevation: 3,
+  },
+  buttonSmall: {
+    backgroundColor: "white",
+    height: 60,
+    width: screenWidth / 3,
     marginHorizontal: 20,
     borderRadius: 35,
     alignItems: "center",
