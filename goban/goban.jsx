@@ -4,6 +4,7 @@ import { cloneDeep } from "lodash";
 import GobanCorner from "./corner";
 import GobanSide from "./side";
 import GobanCross from "./cross";
+import GoLogic from "../logic/go";
 
 /**
  * Goban Component
@@ -13,25 +14,25 @@ class Goban extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      board: this.getBoard(this.props.boardSize[0], this.props.boardSize[1]),
-      turn: 0,
+      board: new GoLogic(this.props.boardSize[0], this.props.boardSize[1]),
+      turn: 1,
     };
   }
 
   handlePress = (cellId) => {
+    if (!this.state.board.isValidMove(cellId[0], cellId[1], this.state.turn)) {
+      // alert(`Invalid Move!`);
+      return;
+    }
     let newState = cloneDeep(this.state);
-    if (this.state.turn === 0) {
-      newState.turn = 1;
-      const newCell = cloneDeep(newState.board[cellId[0]][cellId[1]]);
-      newCell.stoneState = 1;
-      newState.board[cellId[0]][cellId[1]] = newCell;
+    if (this.state.turn === 1) {
+      newState.turn = 2;
+      newState.board = newState.board.play(cellId[0], cellId[1], 1);
       this.setState(newState);
     }
-    if (this.state.turn === 1) {
-      newState.turn = 0;
-      const newCell = cloneDeep(newState.board[cellId[0]][cellId[1]]);
-      newCell.stoneState = 2;
-      newState.board[cellId[0]][cellId[1]] = newCell;
+    if (this.state.turn === 2) {
+      newState.turn = 1;
+      newState.board = newState.board.play(cellId[0], cellId[1], 2);
       this.setState(newState);
     }
   };
@@ -101,7 +102,7 @@ class Goban extends Component {
   };
 
   /**
-   * Renders a cell given its id;
+   * Renders a cell given its id and state
    */
   renderByID = ({ cellId, stoneState }) => {
     const row = cellId[0];
@@ -225,10 +226,12 @@ class Goban extends Component {
    * Render all cells in the current board
    */
   renderCells = () => {
-    let cells = this.state.board.map((cellRow, index) => {
+    let cells = this.state.board.state.map((cellRow, row) => {
       return (
-        <View key={index} style={{ flexDirection: "row" }}>
-          {cellRow.map((cell) => this.renderByID(cell))}
+        <View key={row} style={{ flexDirection: "row" }}>
+          {cellRow.map((cell, col) =>
+            this.renderByID({ cellId: [row, col], stoneState: cell })
+          )}
         </View>
       );
     });
