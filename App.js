@@ -9,11 +9,22 @@ import { createBottomNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "./screens/login";
 import MainScreen from "./screens/main";
 import LoadingScreen from "./screens/loading";
-import * as firebase from "firebase";
-import { firebaseConfig } from "./config/config";
+import firebase from "./firebase/firebase";
+// import * as firebase from "firebase";
+// import { firebaseConfig } from "./config/config";
 
-// Initialise firebase with config
-firebase.initializeApp(firebaseConfig);
+// // Initialise firebase with config
+// firebase.initializeApp(firebaseConfig);
+
+import { decode, encode } from "base-64";
+
+if (!global.btoa) {
+  global.btoa = encode;
+}
+
+if (!global.atob) {
+  global.atob = decode;
+}
 
 // Create a stack navigator
 const Stack = createStackNavigator();
