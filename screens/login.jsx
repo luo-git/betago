@@ -84,6 +84,20 @@ class LoginScreen extends Component {
         firebase
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
+          .then((result) => {
+            console.log("Signed up with id " + result.user.uid);
+            firebase
+              .database()
+              .ref("/users/" + result.user.uid)
+              .set({
+                mail: this.state.email,
+                profile_picture: null, // TODO: Serve a default profile picture
+                locale: "en",
+                nickname: this.state.email,
+                created_at: Date.now(),
+                last_logged_in: Date.now(),
+              });
+          })
           .catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -99,6 +113,12 @@ class LoginScreen extends Component {
         firebase
           .auth()
           .signInWithEmailAndPassword(this.state.email, this.state.password)
+          .then((result) => {
+            firebase
+              .database()
+              .ref("/users/" + result.user.uid)
+              .update({ last_logged_in: Date.now() });
+          })
           .catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -190,11 +210,12 @@ class LoginScreen extends Component {
                   .database()
                   .ref("/users/" + result.user.uid)
                   .set({
-                    gmail: result.user.email,
+                    mail: result.user.email,
                     profile_picture: result.additionalUserInfo.profile.picture,
                     locale: result.additionalUserInfo.profile.locale,
-                    first_name: result.additionalUserInfo.profile.given_name,
-                    last_name: result.additionalUserInfo.profile.family_name,
+                    nickname:
+                      result.additionalUserInfo.profile.given_name +
+                      result.additionalUserInfo.profile.family_name,
                     created_at: Date.now(),
                     last_logged_in: Date.now(),
                   });

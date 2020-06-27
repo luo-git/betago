@@ -5,6 +5,12 @@ import GobanCorner from "./corner";
 import GobanSide from "./side";
 import GobanCross from "./cross";
 import GoLogic from "../logic/go";
+import { environment } from "../environment/environment";
+// import * as firebase from "firebase";
+// import "firebase/firestore";
+import firebase from "../firebase/firebase";
+
+var db = firebase.firestore();
 
 /**
  * Goban Component
@@ -16,26 +22,65 @@ class Goban extends Component {
     this.state = {
       board: new GoLogic(this.props.boardSize[0], this.props.boardSize[1]),
       turn: 1,
+      record: [],
     };
   }
 
+  componentDidMount() {
+    db.collection("games")
+      .doc(this.props.game_id.toString())
+      .onSnapshot((snapshot) =>
+        this.syncWithMovesArray(this.state.board, snapshot.data().record)
+      );
+  }
+
   handlePress = (cellId) => {
-    if (!this.state.board.isValidMove(cellId[0], cellId[1], this.state.turn)) {
-      // alert(`Invalid Move!`);
-      return;
+    const moved = this.makeMove(cellId);
+
+    if (moved) {
+      // fetch(environment.play_game + "/" + this.props.game_id, {
+      //   method: "POST",
+      //   headers: {
+      //     Accept: "application/json",
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     move: {
+      //       move_num: this.state.board.numMoves,
+      //       player: this.state.turn,
+      //       position: cellId,
+      //     },
+      //   }),
+      // }).catch((error) => console.log(error));
+    }
+  };
+
+  makeMove = (cellId, player = this.state.turn) => {
+    if (!this.state.board.isValidMove(cellId[0], cellId[1], player)) {
+      alert(`Invalid Move!`);
+      return false;
     }
     let newState = cloneDeep(this.state);
     if (this.state.turn === 1) {
       newState.turn = 2;
       newState.board = newState.board.play(cellId[0], cellId[1], 1);
       this.setState(newState);
-    }
-    if (this.state.turn === 2) {
+    } else if (this.state.turn === 2) {
       newState.turn = 1;
       newState.board = newState.board.play(cellId[0], cellId[1], 2);
       this.setState(newState);
     }
+    return true;
   };
+
+  syncWithMovesArray(goLogic, movesArray) {
+    for (let i = goLogic.numMoves; i < movesArray.length; i++) {
+      console.log(
+        `syncing move at ${movesArray[i].position} by ${movesArray[i].player}`
+      );
+      this.makeMove(movesArray[i].position, movesArray[i].player);
+    }
+  }
 
   /**
    * Generate a new board

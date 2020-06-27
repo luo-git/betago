@@ -17,12 +17,14 @@ export default class GoLogic {
     row,
     col,
     state = new Array(row).fill(0).map(() => new Array(col).fill(0)),
-    ko = []
+    ko = [],
+    numMoves = 0
   ) {
     this.row = row;
     this.col = col;
     this.state = state;
     this.ko = ko;
+    this.numMoves = numMoves;
 
     this.copyState = (state) => {
       return Array.from(state, (item) => [...item]);
@@ -41,13 +43,19 @@ export default class GoLogic {
   move(x, y, player) {
     const newState = this.copyState(this.state);
     newState[x][y] = player;
-    return new GoLogic(this.row, this.col, newState);
+    return new GoLogic(this.row, this.col, newState, [], this.numMoves + 1);
   }
 
   // Check for the need to remove stones after a move
   updateRemoveStone(x, y) {
     const newState = this.copyState(this.state);
-    const newBoard = new GoLogic(this.row, this.col, newState);
+    const newBoard = new GoLogic(
+      this.row,
+      this.col,
+      newState,
+      [],
+      this.numMoves
+    );
     for (let i = 0; i < 4; i++) {
       const newX = x + directions[i][0];
       const newY = y + directions[i][1];
@@ -59,7 +67,7 @@ export default class GoLogic {
       ) {
         newBoard.dfsRemove(newX, newY, removedStones);
         if (removedStones.size == 1) {
-          console.log(`Ko position at (${newX}, ${newY})`);
+          // console.log(`Ko position at (${newX}, ${newY})`);
           newBoard.ko.push(JSON.stringify([newX, newY]));
         }
       }
@@ -91,6 +99,13 @@ export default class GoLogic {
   }
 
   isValidMove(x, y, player) {
+    // console.log(
+    //   this.withinBoundary(x, y),
+    //   this.state[x][y] === 0,
+    //   !this.ko.includes(JSON.stringify([x, y])),
+    //   this.move(x, y, player).checkLiberty(x, y) > 0,
+    //   this.hasRemovableStone(x, y, player)
+    // );
     return (
       this.withinBoundary(x, y) &&
       this.state[x][y] === 0 &&
