@@ -4,17 +4,16 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import HomeScreen from "./home";
 import GameScreen from "./game";
-import ClanScreen from "./clan";
+import StashScreen from "./stash";
 
 const Tab = createBottomTabNavigator();
 
-export default function MainTabScreen() {
+export default function MainTabScreen({ navigation }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           switch (route.name) {
             case "Home":
               iconName = focused
@@ -24,8 +23,8 @@ export default function MainTabScreen() {
             case "Game":
               iconName = focused ? "ios-list-box" : "ios-list";
               break;
-            case "Clan":
-              iconName = "ios-people";
+            case "Stash":
+              iconName = focused ? "ios-star" : "ios-star-outline";
               break;
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -38,7 +37,7 @@ export default function MainTabScreen() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Game" component={GameScreen} />
-      <Tab.Screen name="Clan" component={ClanScreen} />
+      <Tab.Screen name="Stash" component={StashScreen} />
     </Tab.Navigator>
   );
 }

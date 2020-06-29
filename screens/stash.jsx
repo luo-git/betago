@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Text } from "react-native";
 
-export default function ClanScreen() {
+export default function StashScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Clan screen</Text>
+      <Text style={styles.text}>stash screen</Text>
     </View>
   );
 }
