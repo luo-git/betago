@@ -91,7 +91,7 @@ class LoginScreen extends Component {
               .ref("/users/" + result.user.uid)
               .set({
                 mail: this.state.email,
-                profile_picture: null, // TODO: Serve a default profile picture
+                profile_picture: "../assets/profilePicture.png", // TODO: Serve a default profile picture
                 locale: "en",
                 nickname: this.state.email,
                 created_at: Date.now(),
