@@ -8,6 +8,10 @@ var directions = [
 // Configurations
 const allowSuicide = false;
 
+var counter = 0;
+var dx = [0, 1, 0, -1],
+  dy = [1, 0, -1, 0];
+
 /**
  * Go board class
  * Internal state of the board is represented by 0 = empty, 1 = black, 2 = white
@@ -18,7 +22,10 @@ export default class GoLogic {
     col,
     state = new Array(row).fill(0).map(() => new Array(col).fill(0)),
     ko = [],
-    numMoves = 0
+    numMoves = 0,
+    visitedArr = new Array(this.row)
+      .fill(false)
+      .map(() => new Array(this.col).fill(false))
   ) {
     this.row = row;
     this.col = col;
@@ -184,5 +191,32 @@ export default class GoLogic {
         }
       }
     });
+  }
+
+  // count points
+
+  dfsCountPoints(x, y) {
+    counter++;
+    visitedArr[x][y] = true;
+    const currentBoard = this.state;
+    for (i = 0; i < 4; i++) {
+      var x2 = x + dx[i],
+        y2 = y + dy[i];
+      if (!visitedArr[x2][y2] && currentBoard[x2][y2] == 0) {
+        dfsCountPoints(x2, y2);
+      } else continue;
+    }
+  }
+
+  BlackPoints() {
+    const currentBoard = this.state;
+    for (i = 0; i <= this.row - 1; i++) {
+      for (j = 0; j <= this.row - 1; j++) {
+        if (currentBoard[i][j] == 1 && visitedArr[i][j] == false) {
+          dfsCountPoints(i, j);
+        }
+      }
+    }
+    return counter;
   }
 }
