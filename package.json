@@ -8,15 +8,18 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@dudigital/react-native-zoomable-view": "^1.0.15",
     "@react-native-community/masked-view": "0.1.6",
     "@react-navigation/bottom-tabs": "^5.5.1",
     "@react-navigation/drawer": "^5.8.1",
-    "@react-navigation/native": "^5.5.0",
+    "@react-navigation/native": "^5.7.1",
     "@react-navigation/stack": "^5.4.1",
     "base-64": "^0.1.0",
     "expo": "~37.0.3",
     "expo-asset": "^8.1.5",
     "expo-google-app-auth": "^8.1.0",
+    "expo-image-picker": "^8.3.0",
+    "fiction-expo-restart": "^1.0.4",
     "firebase": "^7.15.1",
     "global": "^4.4.0",
     "react": "~16.9.0",
@@ -27,7 +30,8 @@
     "react-native-safe-area-context": "0.7.3",
     "react-native-screens": "~2.2.0",
     "react-native-svg": "^12.1.0",
-    "react-native-web": "~0.11.7"
+    "react-native-web": "~0.11.7",
+    "react-native-webview": "^10.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
