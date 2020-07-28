@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Svg, { Line, Circle } from "react-native-svg";
+import Svg, { Line, Circle, Rect } from "react-native-svg";
 import BlackStone from "./blackstone";
 import WhiteStone from "./whitestone";
 
@@ -33,6 +33,32 @@ class GobanCross extends Component {
     return null;
   };
 
+  getMarking = ({ cellSize, marking }) => {
+    if (marking !== this.props.stoneState) {
+      if (marking === 1) {
+        return (
+          <Rect
+            x={cellSize / 4}
+            y={cellSize / 4}
+            width={cellSize / 2}
+            height={cellSize / 2}
+            fill="black"
+          />
+        );
+      } else if (marking === 2) {
+        return (
+          <Rect
+            x={cellSize / 4}
+            y={cellSize / 4}
+            width={cellSize / 2}
+            height={cellSize / 2}
+            fill="white"
+          />
+        );
+      }
+    }
+  };
+
   render() {
     const { cellSize, cellId } = this.props;
     return (
@@ -59,6 +85,7 @@ class GobanCross extends Component {
         />
         {this.getStar(this.props)}
         {this.getStone(this.props)}
+        {this.getMarking(this.props)}
       </Svg>
     );
   }

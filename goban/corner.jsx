@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Svg, { Line } from "react-native-svg";
+import Svg, { Line, Rect } from "react-native-svg";
 import BlackStone from "./blackstone";
 import WhiteStone from "./whitestone";
 
@@ -32,6 +32,32 @@ class GobanCorner extends Component {
     }
   };
 
+  getMarking = ({ cellSize, marking }) => {
+    if (marking !== this.props.stoneState) {
+      if (marking === 1) {
+        return (
+          <Rect
+            x={cellSize / 4}
+            y={cellSize / 4}
+            width={cellSize / 2}
+            height={cellSize / 2}
+            fill="black"
+          />
+        );
+      } else if (marking === 2) {
+        return (
+          <Rect
+            x={cellSize / 4}
+            y={cellSize / 4}
+            width={cellSize / 2}
+            height={cellSize / 2}
+            fill="white"
+          />
+        );
+      }
+    }
+  };
+
   render() {
     const { cellSize, cellId } = this.props;
     return (
@@ -58,6 +84,7 @@ class GobanCorner extends Component {
           strokeWidth={Math.floor(1 + cellSize / 20)}
         />
         {this.getStone(this.props)}
+        {this.getMarking(this.props)}
       </Svg>
     );
   }
