@@ -1,5 +1,6 @@
 import * as firebase from "firebase";
 import "firebase/firestore";
+import "firebase/database";
 
 //Initializing firebase firestore
 firebase.initializeApp({
