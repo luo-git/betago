@@ -6,7 +6,6 @@ import {
   Image,
   Dimensions,
   TextInput,
-  Alert,
 } from "react-native";
 import Animated, {
   Value,
@@ -29,6 +28,7 @@ import Animated, {
 import { TapGestureHandler, State } from "react-native-gesture-handler";
 import * as Google from "expo-google-app-auth";
 import firebase from "firebase";
+import { environment } from "../environment/environment";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -85,18 +85,15 @@ class LoginScreen extends Component {
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then((result) => {
+            this.handleCreateUser(
+              result.user.uid,
+              this.state.email,
+              environment.static + "/profile/default_profile_1.jpg",
+              "en",
+              this.state.email,
+              1200
+            );
             console.log("Signed up with id " + result.user.uid);
-            firebase
-              .database()
-              .ref("/users/" + result.user.uid)
-              .set({
-                mail: this.state.email,
-                profile_picture: null, // TODO: Serve a default profile picture
-                locale: "en",
-                nickname: this.state.email,
-                created_at: Date.now(),
-                last_logged_in: Date.now(),
-              });
           })
           .catch(function (error) {
             // Handle Errors here.
@@ -113,12 +110,6 @@ class LoginScreen extends Component {
         firebase
           .auth()
           .signInWithEmailAndPassword(this.state.email, this.state.password)
-          .then((result) => {
-            firebase
-              .database()
-              .ref("/users/" + result.user.uid)
-              .update({ last_logged_in: Date.now() });
-          })
           .catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -189,58 +180,47 @@ class LoginScreen extends Component {
   onSignIn = (googleUser) => {
     console.log("Google Auth Response", googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-    var unsubscribe = firebase.auth().onAuthStateChanged(
-      function (firebaseUser) {
-        unsubscribe();
-        // Check if we are already signed-in Firebase with the correct user.
-        if (!this.isUserEqual(googleUser, firebaseUser)) {
-          // Build Firebase credential with the Google ID token.
-          var credential = firebase.auth.GoogleAuthProvider.credential(
-            googleUser.idToken,
-            googleUser.accessToken
-          );
-          // Sign in with credential from the Google user.
-          firebase
-            .auth()
-            .signInWithCredential(credential)
-            .then(function (result) {
-              console.log("user signed in");
-              if (result.additionalUserInfo.isNewUser) {
-                firebase
-                  .database()
-                  .ref("/users/" + result.user.uid)
-                  .set({
-                    mail: result.user.email,
-                    profile_picture: result.additionalUserInfo.profile.picture,
-                    locale: result.additionalUserInfo.profile.locale,
-                    nickname:
-                      result.additionalUserInfo.profile.given_name +
-                      result.additionalUserInfo.profile.family_name,
-                    created_at: Date.now(),
-                    last_logged_in: Date.now(),
-                  });
-              } else {
-                firebase
-                  .database()
-                  .ref("/users/" + result.user.uid)
-                  .update({ last_logged_in: Date.now() });
-              }
-            })
-            .catch(function (error) {
-              // Handle Errors here.
-              var errorCode = error.code;
-              var errorMessage = error.message;
-              // The email of the user's account used.
-              var email = error.email;
-              // The firebase.auth.AuthCredential type that was used.
-              var credential = error.credential;
-              // ...
-            });
-        } else {
-          console.log("User already signed-in Firebase.");
-        }
-      }.bind(this)
-    );
+    var unsubscribe = firebase.auth().onAuthStateChanged((firebaseUser) => {
+      unsubscribe();
+      // Check if we are already signed-in Firebase with the correct user.
+      if (!this.isUserEqual(googleUser, firebaseUser)) {
+        // Build Firebase credential with the Google ID token.
+        var credential = firebase.auth.GoogleAuthProvider.credential(
+          googleUser.idToken,
+          googleUser.accessToken
+        );
+        // Sign in with credential from the Google user.
+        firebase
+          .auth()
+          .signInWithCredential(credential)
+          .then((result) => {
+            if (result.additionalUserInfo.isNewUser) {
+              this.handleCreateUser(
+                result.user.uid,
+                result.user.email,
+                result.additionalUserInfo.profile.picture,
+                result.additionalUserInfo.profile.locale,
+                result.additionalUserInfo.profile.given_name +
+                  " " +
+                  result.additionalUserInfo.profile.family_name,
+                1200
+              );
+            }
+          })
+          .catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+          });
+      } else {
+        console.log("User already signed-in Firebase.");
+      }
+    });
   };
 
   isUserEqual = (googleUser, firebaseUser) => {
@@ -258,6 +238,24 @@ class LoginScreen extends Component {
       }
     }
     return false;
+  };
+
+  handleCreateUser = (uid, email, profile_picture, locale, nickname, elo) => {
+    fetch(environment.create_user, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uid: uid,
+        email: email,
+        profile_picture: profile_picture,
+        locale: locale,
+        nickname: nickname,
+        elo: elo,
+      }),
+    }).catch((error) => console.log(error));
   };
 
   render() {
