@@ -1,14 +1,24 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import firebase from "../firebase/firebase";
+import { updatePresence } from "../firebase/presence";
 
 import HomeScreen from "./home";
 import GameScreen from "./game";
-import StashScreen from "./stash";
+// import StashScreen from "./stash";
 
 const Tab = createBottomTabNavigator();
 
 export default function MainTabScreen({ navigation }) {
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        updatePresence();
+      }
+    });
+  }, []);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -37,7 +47,7 @@ export default function MainTabScreen({ navigation }) {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Game" component={GameScreen} />
-      <Tab.Screen name="Stash" component={StashScreen} />
+      {/* <Tab.Screen name="Stash" component={StashScreen} /> */}
     </Tab.Navigator>
   );
 }
