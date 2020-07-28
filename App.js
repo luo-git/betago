@@ -2,20 +2,10 @@ import React from "react";
 import "react-native-gesture-handler";
 import { Asset } from "expo-asset";
 import { AppLoading } from "expo";
-import { StyleSheet, Text, View, Platform } from "react-native";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-// import { createStackNavigator } from "@react-navigation/stack";
-// import { createBottomNavigator } from "@react-navigation/bottom-tabs";
-// import LoginScreen from "./screens/login";
-// import MainScreen from "./screens/main";
-// import LoadingScreen from "./screens/loading";
-import firebase from "./firebase/firebase";
 import StackScreen from "./screens/stack";
-// import * as firebase from "firebase";
-// import { firebaseConfig } from "./config/config";
-
-// // Initialise firebase with config
-// firebase.initializeApp(firebaseConfig);
+import { enableScreens } from "react-native-screens";
 
 import { decode, encode } from "base-64";
 import { YellowBox } from "react-native";
@@ -39,14 +29,13 @@ console.warn = (message) => {
   }
 };
 
-// Create a stack navigator
-// const Stack = createStackNavigator();
+// Enable perf optimisation
+enableScreens();
 
 export default class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      boardWidth: 0,
       // Check for preloading of assets
       isReady: false,
     };
