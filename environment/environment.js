@@ -1,8 +1,9 @@
 export const environment = {
   production: false,
-  create_game:
-    "https://us-central1-betago-29c7e.cloudfunctions.net/app/api/create_game",
-  play_game: "https://us-central1-betago-29c7e.cloudfunctions.net/app/api/play",
-  retrieve_game:
-    "https://us-central1-betago-29c7e.cloudfunctions.net/app/api/retrieve_game",
+  create_user:
+    "https://us-central1-betago-29c7e.cloudfunctions.net/api/user/create",
+  static: "https://us-central1-betago-29c7e.cloudfunctions.net/static",
+  queue: "https://us-central1-betago-29c7e.cloudfunctions.net/api/queue",
+  user: "https://us-central1-betago-29c7e.cloudfunctions.net/api/user",
+  game: "https://us-central1-betago-29c7e.cloudfunctions.net/api/game",
 };
